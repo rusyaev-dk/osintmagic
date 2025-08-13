@@ -1,3 +1,3 @@
 def test_import():
-    import osintmagic_plus
-    assert hasattr(osintmagic_plus, "__version__")
+    import osint
+    assert hasattr(osint, "__version__")

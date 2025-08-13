@@ -1,2 +1,0 @@
-[console_scripts]
-osintmagic-plus = osintmagic_plus.cli:main

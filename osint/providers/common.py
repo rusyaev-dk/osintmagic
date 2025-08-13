@@ -1,4 +1,4 @@
-# osintmagic_plus/providers/common.py
+# osint/providers/common.py
 from __future__ import annotations
 from bs4 import BeautifulSoup
 from ..core.http import HttpClient

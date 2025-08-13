@@ -1,4 +1,4 @@
-# osintmagic_plus/core/http.py
+# osint/core/http.py
 from __future__ import annotations
 import asyncio, logging, random, time
 import aiohttp

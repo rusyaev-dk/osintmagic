@@ -1,4 +1,5 @@
 *.env
 *.db
 *.log
-*.html
+/reports/*
+/logs/*
