@@ -4,12 +4,12 @@ import asyncio, aiohttp, random, datetime, logging, math
 from typing import Dict, List, Tuple
 from tqdm import tqdm
 
-from .config import Config
+from .core.config import Config
 from .rate import AsyncRateLimiter, DomainRateLimiter
-from .cache import TTLCache
+from .core.cache import TTLCache
 from .async_fetcher import fetch_and_parse, build_session
-from .models import SearchHit, Dossier, Entities
-from .ranking import score_hit, confidence_label
+from .core.models import SearchHit, Dossier, Entities
+from .core.ranking import score_hit, confidence_label
 from .cross_validation import cross_validate
 from .username_filter import looks_bad
 from .name_match import translit_variants

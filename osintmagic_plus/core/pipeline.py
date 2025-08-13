@@ -190,6 +190,7 @@ async def run_pipeline(cfg: AppConfig):
 
     # Рендер отчёта
     out_dir = cfg.report_out_dir
+    await _enrich_results(data, cfg)
     render_report(json.loads(json.dumps(asdict(data), default=str)),  # make JSON-serializable
                   templates_dir=Path(__file__).resolve().parent.parent / "templates",
                   static_dir=Path(__file__).resolve().parent.parent / "static",
@@ -205,3 +206,87 @@ async def run_pipeline(cfg: AppConfig):
     console.print(table)
 
     console.log(f"Готово. Отчёт: {out_dir / 'index.html'}")
+
+async def _enrich_results(data, cfg):
+    from .http import HttpClient
+    from bs4 import BeautifulSoup
+    import re, asyncio
+    http = HttpClient(cfg)
+    profiles = []
+    mentions = []
+    activity = []
+    # helper to parse emails/phones quickly
+    email_re = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")
+    phone_re = re.compile(r"(?:\+?\d[\s\-()]*){7,}\d")
+    async def one(item):
+        try:
+            html = await http.get_text(item.url)
+            soup = BeautifulSoup(html or "", "lxml")
+            # OpenGraph
+            og_img = soup.find("meta", attrs={"property":"og:image"}) or soup.find("meta", attrs={"name":"twitter:image"})
+            og_video = soup.find("meta", attrs={"property":"og:video"}) or soup.find("meta", attrs={"name":"twitter:player"})
+            if og_img and not getattr(item, "og_image", None):
+                item.og_image = (og_img.get("content") or "").strip()
+            if og_video and not getattr(item, "media_preview", None):
+                item.media_preview = (og_video.get("content") or "").strip()
+            # published
+            pub = soup.find("meta", attrs={"property":"article:published_time"}) or soup.find("time", attrs={"datetime":True})
+            if pub and not getattr(item, "created_at", None):
+                item.created_at = (pub.get("content") or pub.get("datetime") or "").strip()
+            # emails/phones
+            m = email_re.search(html or "")
+            if m and not getattr(item, "email", None):
+                item.email = m.group(0)
+            m2 = phone_re.search(html or "")
+            if m2 and not getattr(item, "phone", None):
+                item.phone = m2.group(0)
+            # activity
+            # naive: use created_at or any datetime found for last_activity fallback
+            dt = soup.find_all("time", attrs={"datetime": True})
+            if dt and not getattr(item, "last_active_at", None):
+                item.last_active_at = dt[-1].get("datetime")
+        except Exception:
+            pass
+        return item
+
+    # Run enrichment for all items we currently have
+    tasks = [one(x) for x in (data.profiles + data.mentions)]
+    done = await asyncio.gather(*tasks, return_exceptions=False)
+
+    # Reassign
+    data.profiles = [x for x in done if getattr(x, "category", "") == "profile" or x.provider in ("github","linkedin","twitter","instagram","vk","telegram","facebook","tiktok")]
+    data.mentions = [x for x in done if x not in data.profiles]
+
+    # Activity list for heatmap
+    for x in done:
+        ts = getattr(x, "last_active_at", None) or getattr(x, "created_at", None)
+        if ts:
+            activity.append({"ts": str(ts), "url": x.url, "source": x.provider})
+    data.activity = activity
+
+    # Graph
+    nodes = [{"id":"person", "label": data.query.get("name") or data.query.get("username") or "Person"}]
+    edges = []
+    for p in data.profiles:
+        pid = f"profile:{p.url}"
+        nodes.append({"id": pid, "label": p.title or p.username or p.url})
+        edges.append({"from":"person","to":pid})
+        if getattr(p, "email", None):
+            e_id = f"email:{p.email}"
+            nodes.append({"id": e_id, "label": p.email})
+            edges.append({"from": pid, "to": e_id})
+        if getattr(p, "phone", None):
+            ph_id = f"phone:{p.phone}"
+            nodes.append({"id": ph_id, "label": p.phone})
+            edges.append({"from": pid, "to": ph_id})
+        if getattr(p, "username", None):
+            u_id = f"user:{p.username}"
+            nodes.append({"id": u_id, "label": p.username})
+            edges.append({"from": pid, "to": u_id})
+    # de-duplicate nodes by id
+    seen = set(); uniq_nodes=[]
+    for n in nodes:
+        if n["id"] in seen: continue
+        seen.add(n["id"]); uniq_nodes.append(n)
+    data.graph = {"nodes": uniq_nodes, "edges": edges}
+    return data

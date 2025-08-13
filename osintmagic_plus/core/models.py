@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional, Dict, List
 from datetime import datetime
 
 @dataclass
@@ -37,3 +37,43 @@ class ReportData:
     risks: list[str] = field(default_factory=list)
     activity: list[dict] = field(default_factory=list)  # timestamps for heatmap
     graph: dict = field(default_factory=lambda: {"nodes": [], "edges": []})
+
+
+@dataclass
+class SearchHit:
+    title: str
+    url: str
+    snippet: str
+    provider: str
+    score: float = 0.0
+    category: Optional[str] = None
+    saved_path: Optional[str] = None
+    content_excerpt: Optional[str] = None
+    og_image: Optional[str] = None
+    created_at: Optional[datetime] = None
+    last_activity: Optional[datetime] = None
+    username: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    extra: Dict[str, str] = field(default_factory=dict)
+
+@dataclass
+class Entities:
+    emails: List[str] = field(default_factory=list)
+    phones: List[str] = field(default_factory=list)
+    usernames: List[str] = field(default_factory=list)
+    domains: List[str] = field(default_factory=list)
+
+@dataclass
+class Dossier:
+    subject: str
+    city: Optional[str]
+    country: Optional[str]
+    birth_year: Optional[int]
+    phone: Optional[str]
+    username: Optional[str]
+    generated_iso: str
+    groups: Dict[str, List[SearchHit]]
+    entities: Entities
+    confidence: Dict[str, str] = field(default_factory=dict)  # url -> "High"/"Medium"/"Low"
+    providers_used: List[str] = field(default_factory=list)

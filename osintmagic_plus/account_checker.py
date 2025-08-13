@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio, re
 from typing import List, Dict, Tuple
 from .async_fetcher import fetch_and_parse
-from .models import SearchHit
+from .core.models import SearchHit
 from .username_filter import looks_bad
 
 PROFILE_PATTERNS = {

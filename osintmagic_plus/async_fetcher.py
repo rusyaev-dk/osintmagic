@@ -3,7 +3,7 @@ from __future__ import annotations
 import aiohttp, asyncio, hashlib, os, re, random, time, logging
 from bs4 import BeautifulSoup
 from typing import Dict, Optional
-from .config import Config
+from .core.config import AppConfig
 
 log = logging.getLogger("async_fetcher")
 
