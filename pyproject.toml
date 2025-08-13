@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "osintmagic-plus"
+version = "0.1.0"
+description = "Этичный асинхронный OSINT-парсер с HTML-отчётами и современным UI/UX"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{name = "You"}]
+license = {text = "MIT"}
+dependencies = [
+    "aiohttp>=3.10.0",
+    "aiohttp-socks>=0.9.0",
+    "aiodns>=3.2.0",
+    "beautifulsoup4>=4.12.2",
+    "lxml>=5.2.2",
+    "Jinja2>=3.1.4",
+    "diskcache>=5.6.3",
+    "python-dotenv>=1.0.1",
+    "click>=8.1.7",
+    "rich>=13.7.1",
+    "tqdm>=4.66.4",
+    "phonenumbers>=8.13.40",
+    "email-validator>=2.1.0.post1",
+    "python-slugify>=8.0.4",
+    "rapidfuzz>=3.9.6",
+    "networkx>=3.3",
+    "pydot>=2.0.0",
+]
+
+[project.scripts]
+osintmagic-plus = "osintmagic_plus.cli:main"

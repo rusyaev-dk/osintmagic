@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "categories": {
+    "social": [
+      {
+        "name": "Twitter",
+        "url": "https://x.com",
+        "type": "profile"
+      },
+      {
+        "name": "Instagram",
+        "url": "https://www.instagram.com",
+        "type": "profile"
+      },
+      {
+        "name": "VK",
+        "url": "https://vk.com",
+        "type": "profile"
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com",
+        "type": "profile"
+      }
+    ],
+    "forums": [
+      {
+        "name": "Reddit",
+        "url": "https://www.reddit.com",
+        "type": "profile"
+      },
+      {
+        "name": "Stack Overflow",
+        "url": "https://stackoverflow.com",
+        "type": "profile"
+      }
+    ],
+    "media": [
+      {
+        "name": "YouTube",
+        "url": "https://www.youtube.com",
+        "type": "profile"
+      },
+      {
+        "name": "SoundCloud",
+        "url": "https://soundcloud.com",
+        "type": "profile"
+      }
+    ],
+    "public": [
+      {
+        "name": "HaveIBeenPwned",
+        "url": "https://haveibeenpwned.com/api/v3",
+        "type": "api"
+      },
+      {
+        "name": "OpenCorporates",
+        "url": "https://opencorporates.com",
+        "type": "search"
+      }
+    ],
+    "whois": [
+      {
+        "name": "Whois",
+        "url": "https://www.whois.com/whois",
+        "type": "search"
+      }
+    ],
+    "darknet": [
+      {
+        "name": "Ahmia",
+        "url": "https://ahmia.fi",
+        "type": "search"
+      }
+    ]
+  }
+}
