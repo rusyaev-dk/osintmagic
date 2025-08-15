@@ -1,0 +1,3 @@
+strict graph {
+person [label="Сергей Кондратенко", type=person, level=0, size=30];
+}

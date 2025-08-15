@@ -77,3 +77,29 @@ class Dossier:
     entities: Entities
     confidence: Dict[str, str] = field(default_factory=dict)  # url -> "High"/"Medium"/"Low"
     providers_used: List[str] = field(default_factory=list)
+
+
+
+@dataclass
+class ProfileData:
+    """Structured profile data container"""
+    platform: str
+    username: str
+    url: str
+    title: Optional[str] = None
+    full_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    followers: Optional[int] = None
+    following: Optional[int] = None
+    posts_count: Optional[int] = None
+    joined_at: Optional[str] = None
+    last_active_at: Optional[str] = None
+    location: Optional[str] = None
+    verified: bool = False
+    bio: Optional[str] = None
+    website: Optional[str] = None
+    extra: Dict[str, Any] = None
+
+    def __post_init__(self):
+        if self.extra is None:
+            self.extra = {}

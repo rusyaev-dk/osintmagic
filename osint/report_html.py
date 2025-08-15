@@ -1,7 +1,6 @@
 
 from __future__ import annotations
 import json, os
-from typing import List
 from .core.models import Dossier
 
 ASSETS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "report_assets"))

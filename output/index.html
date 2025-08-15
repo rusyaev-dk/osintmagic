@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OSINT Report</title>
+  <link rel="stylesheet" href="static/css/report.css">
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+<header class="container">
+  <h1>OSINT Report</h1>
+  <div class="controls">
+    <button id="themeToggle">🌓 Тема</button>
+    <button id="printBtn">🖨️ PDF</button>
+    <input id="searchInput" placeholder="Фильтр по тексту..." />
+  </div>
+</header>
+
+<main class="container">
+  <section class="tabs">
+    <button class="tab active" data-tab="summary">Сводка</button>
+    <button class="tab" data-tab="profiles">Социальные профили</button>
+    <button class="tab" data-tab="mentions">Упоминания</button>
+    <button class="tab" data-tab="graph">Связи</button>
+    <button class="tab" data-tab="activity">Активность</button>
+    <button class="tab" data-tab="risks">Риски</button>
+  </section>
+
+  <section class="tab-panel active" id="summary">
+    <div class="card">
+      <h2>Запрос</h2>
+      <div class="grid two">
+        <div><b>ФИО</b><div>Сергей Кондратенко</div></div>
+        <div><b>Ник</b><div>-</div></div>
+        <div><b>Email</b><div>-</div></div>
+        <div><b>Телефон</b><div>-</div></div>
+        <div><b>Город</b><div>-</div></div>
+        <div><b>Страна</b><div>Россия</div></div>
+      </div>
+      <div class="hint">Данные отчёта локальные. Соблюдайте закон и этику.</div>
+    </div>
+  </section>
+
+  <section class="tab-panel" id="profiles">
+    <h2>Социальные профили</h2>
+    <div class="cards" id="profilesList">
+      
+    </div>
+  </section>
+
+  <section class="tab-panel" id="mentions">
+    <h2>Упоминания</h2>
+    <div class="cards" id="mentionsList">
+      
+    </div>
+  </section>
+
+  <section class="tab-panel" id="graph">
+    <h2>Граф связей</h2>
+    <div id="graphContainer"></div>
+    <div class="row">
+      <a class="btn" href="graph.gexf" download>Скачать GEXF</a>
+      <a class="btn" href="graph.graphml" download>Скачать GraphML</a>
+      <a class="btn" href="graph.dot" download>Скачать DOT</a>
+    </div>
+  </section>
+
+  <section class="tab-panel" id="activity">
+    <h2>Тепловая карта активности</h2>
+    <canvas id="heatmap" width="900" height="220"></canvas>
+  </section>
+
+  <section class="tab-panel" id="risks">
+    <h2>Риски</h2>
+    <ul>
+      <li>Пока не выявлено.</li>
+    </ul>
+  </section>
+</main>
+
+<script src="static/js/report.js"></script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+[console_scripts]
+osint-plus = osint.cli:main
