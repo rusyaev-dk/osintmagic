@@ -37,7 +37,6 @@ spacy>=3.7; python_version>='3.9'
 sentence-transformers>=3.0; python_version>='3.9'
 onnxruntime>=1.17; python_version>='3.9'
 
-aiohttp_socks~=0.10.1
 diskcache~=5.6.3
 python-slugify~=8.0.4
 rich~=14.1.0

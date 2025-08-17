@@ -2,7 +2,7 @@
 from __future__ import annotations
 import asyncio, logging, random, time
 import aiohttp
-from aiohttp_socks import ProxyConnector
+# from aiohttp_socks import ProxyConnector        # ⟵ Больше не нужен
 from aiohttp import ClientTimeout
 from aiohttp import resolver as aioresolver
 from urllib.parse import urlparse
@@ -33,10 +33,16 @@ class RateLimiter:
             self.last[host] = time.monotonic()
 
 class HttpClient:
-    def __init__(self, timeout: int, tor_socks: str | None = None,
-                 http_proxy: str | None = None, https_proxy: str | None = None):
+    def __init__(
+        self,
+        timeout: int,
+        tor_socks: str | None = None,   # ⟵ оставлено для совместимости, но игнорируется
+        http_proxy: str | None = None,
+        https_proxy: str | None = None,
+    ):
+        if tor_socks:
+            logging.warning("HttpClient: 'tor_socks' больше не используется и будет проигнорирован.")
         self.timeout = timeout
-        self.tor_socks = tor_socks
         self.http_proxy = http_proxy
         self.https_proxy = https_proxy
         self.rate = RateLimiter()
@@ -50,12 +56,10 @@ class HttpClient:
         }
         timeout = ClientTimeout(total=self.timeout)
 
-        # Явно задаём резолвер, чтобы не было 'getaddrinfo' None
-        if self.tor_socks:
-            connector = ProxyConnector.from_url(self.tor_socks, rdns=True)
-        else:
-            connector = aiohttp.TCPConnector(resolver=aioresolver.AsyncResolver())
+        # Всегда обычный TCPConnector с явным резолвером
+        connector = aiohttp.TCPConnector(resolver=aioresolver.AsyncResolver())
 
+        # Если нужны HTTP(S) прокси — задаём их на уровне запроса (см. методы ниже)
         self.session = aiohttp.ClientSession(timeout=timeout, headers=headers, connector=connector)
         return self
 
@@ -70,7 +74,8 @@ class HttpClient:
             return None
         await self.rate.throttle(url)
         try:
-            async with self.session.get(url, params=params, headers=headers) as r:
+            proxy = self.http_proxy if url.startswith("http://") else self.https_proxy
+            async with self.session.get(url, params=params, headers=headers, proxy=proxy) as r:
                 if r.status == 200:
                     return await r.json()
                 return None
@@ -84,7 +89,8 @@ class HttpClient:
             return None
         await self.rate.throttle(url)
         try:
-            async with self.session.get(url, headers=headers) as r:
+            proxy = self.http_proxy if url.startswith("http://") else self.https_proxy
+            async with self.session.get(url, headers=headers, proxy=proxy) as r:
                 if r.status == 200:
                     return await r.text(errors="ignore")
                 return None

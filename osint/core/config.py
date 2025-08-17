@@ -33,7 +33,6 @@ class AppConfig:
 
     # Paths
     base_dir: Path = Path.cwd()
-    reports_dir: Path = field(default_factory=lambda: Path.cwd() / "reports")
     logs_dir: Path = field(default_factory=lambda: Path.cwd() / "logs")
     cache_dir: Path = field(default_factory=lambda: Path.cwd() / "cache")
 
@@ -52,10 +51,6 @@ class AppConfig:
     def report_slug(self) -> str:
         q = self.name or self.username or self.email or "report"
         return slugify(q)
-
-    @property
-    def report_out_dir(self) -> Path:
-        return self.reports_dir / self.report_slug
 
     @classmethod
     def from_cli_kwargs(cls, kw: dict) -> "AppConfig":
@@ -79,7 +74,6 @@ class AppConfig:
             tor=bool(kw.get("tor", False)),
             depth=int(kw.get("depth", 1)),
         )
-        cfg.reports_dir.mkdir(parents=True, exist_ok=True)
         cfg.logs_dir.mkdir(parents=True, exist_ok=True)
         cfg.cache_dir.mkdir(parents=True, exist_ok=True)
         return cfg
